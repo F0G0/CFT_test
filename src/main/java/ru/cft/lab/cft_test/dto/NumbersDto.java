@@ -1,21 +1,28 @@
 package ru.cft.lab.cft_test.dto;
 
-import java.util.List;
+import java.util.ArrayList;
 
 public class NumbersDto {
-    private int start;
-    private int end;
 
-    public NumbersDto(int start, int end) {
-        this.start = start;
-        this.end = end;
+    private ArrayList<Integer> interval;
+
+    public NumbersDto(ArrayList<Integer> interval) {
+        this.interval = interval;
     }
 
+    public NumbersDto(int start, int end) {
+        this.interval = new ArrayList<Integer>();
+        this.interval.add(start);
+        this.interval.add(end);
+    }
+    public ArrayList<Integer> getInterval() {
+        return interval;
+    }
     public int getStart() {
-        return start;
+        return interval.get(0);
     }
 
     public int getEnd() {
-        return end;
+        return interval.get(1);
     }
 }

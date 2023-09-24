@@ -10,7 +10,7 @@ public class Numbers {
     @Column(name = "id", nullable = false)
     private UUID Id;
     @Column(name = "num_start")
-    private int Start;
+    private int start;
     @Column(name = "num_end")
     private int end;
 
@@ -26,11 +26,11 @@ public class Numbers {
     }
 
     public int getStart() {
-        return Start;
+        return start;
     }
 
     public void setStart(int start) {
-        Start = start;
+        this.start = start;
     }
 
     public int getEnd() {
