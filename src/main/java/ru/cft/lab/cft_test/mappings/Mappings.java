@@ -1,5 +1,6 @@
 package ru.cft.lab.cft_test.mappings;
 
+import ru.cft.lab.cft_test.dto.LettersDto;
 import ru.cft.lab.cft_test.dto.NumbersDto;
 import ru.cft.lab.cft_test.repository.entity.Numbers;
 
@@ -22,5 +23,11 @@ public class Mappings {
         }
         return arr;
     }
-
+    public static List<LettersDto> ArraytoLetterDto(ArrayList<ArrayList<String>> list){
+        List<LettersDto> arr = new ArrayList<>();
+        for(ArrayList<String> iter:list){
+            arr.add(new LettersDto(iter));
+        }
+        return arr;
+    }
 }

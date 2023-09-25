@@ -2,12 +2,10 @@ package ru.cft.lab.cft_test.dto;
 
 import java.util.ArrayList;
 
-public class NumbersDto {
-
-    private ArrayList<Integer> interval;
+public class NumbersDto extends IntervalDto<Integer>{
 
     public NumbersDto(ArrayList<Integer> interval) {
-        this.interval = interval;
+        super(interval);
     }
 
     public NumbersDto(int start, int end) {
@@ -15,14 +13,5 @@ public class NumbersDto {
         this.interval.add(start);
         this.interval.add(end);
     }
-    public ArrayList<Integer> getInterval() {
-        return interval;
-    }
-    public int getStart() {
-        return interval.get(0);
-    }
 
-    public int getEnd() {
-        return interval.get(1);
-    }
 }

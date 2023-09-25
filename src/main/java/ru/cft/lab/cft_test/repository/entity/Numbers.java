@@ -40,4 +40,16 @@ public class Numbers {
     public void setEnd(int end) {
         this.end = end;
     }
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        }
+        if (!(o instanceof Numbers)) {
+            return false;
+        }
+        Numbers c = (Numbers) o;
+        return Double.compare(start, c.start) == 0
+                && Double.compare(end, c.end) == 0;
+    }
 }

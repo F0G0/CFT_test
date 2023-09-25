@@ -4,15 +4,13 @@ package ru.cft.lab.cft_test.service.h2;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.springframework.stereotype.Service;
 import ru.cft.lab.cft_test.dto.NumbersDto;
-import ru.cft.lab.cft_test.exception.IntervalNotFoundException;
-import ru.cft.lab.cft_test.mappings.Mappings;
 import ru.cft.lab.cft_test.repository.NumbersRepository;
 import ru.cft.lab.cft_test.repository.entity.Numbers;
 import ru.cft.lab.cft_test.service.NumberService;
+import ru.cft.lab.cft_test.utils.Utils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+
 @Service("H2NumberService")
 public class NumberServiceImpl implements NumberService {
     private final ObjectIdGenerators.UUIDGenerator uuidGenerator;
@@ -38,14 +36,49 @@ public class NumberServiceImpl implements NumberService {
     }
 
     @Override
+    public void createIntervalAndMerge(List<NumbersDto> intervalsDto) {
+        List<Numbers> intervals = new ArrayList<>();
+        UUID id = this.uuidGenerator.generateId(null);
+        for(NumbersDto interval:intervalsDto) {
+            Numbers numbers = new Numbers();
+            numbers.setStart(interval.getStart());
+            numbers.setEnd(interval.getEnd());
+            intervals.add(numbers);
+        }
+        Collections.sort(intervals, new Comparator() {
+
+            public int compare(Object o1, Object o2) {
+
+                Integer s1 = ((Numbers) o1).getStart();
+                Integer s2 = ((Numbers) o2).getStart();
+                int sComp = s1.compareTo(s2);
+
+                if (sComp != 0) {
+                    return sComp;
+                }
+
+                Integer e1 = ((Numbers) o1).getEnd();
+                Integer e2 = ((Numbers) o2).getEnd();
+                return e1.compareTo(e2);
+            }});
+        Utils.mergeNumbers(intervals);
+        for(Numbers interval:intervals) {
+            interval.setId(id);
+            this.numbersRepository.save(interval);
+            id = this.uuidGenerator.generateId(null);
+        }
+    }
+
+    @Override
     public void mergeIntervals() {
         List<Numbers> intervals = list();
-        List<Numbers> arr = new ArrayList<>(intervals);
+        List<Numbers> arr = Utils.makeCopyNum(intervals);
         if(intervals.isEmpty()) return;
         int index = 0;
         for (int i = 1; i < arr.size(); i++) {
             if (arr.get(index).getEnd() >= arr.get(i).getStart()) {
-                arr.get(index).setEnd(Math.max(arr.get(index).getEnd(), arr.get(i).getEnd()));
+                arr.get(index).setEnd(Math.max(arr.get(index).getEnd(),
+                        arr.get(i).getEnd()));
             }
             else {
                 index++;
@@ -53,9 +86,14 @@ public class NumberServiceImpl implements NumberService {
             }
         }
         arr = arr.subList(0,index+1);
-        intervals.removeAll(arr);
         for (Numbers old: intervals) {
-            numbersRepository.deleteById(old.getId());
+            if(!arr.contains(old))
+                numbersRepository.deleteById(old.getId());
+        }
+        for(Numbers neww: arr){
+            if(!intervals.contains(neww)){
+                numbersRepository.save(neww);
+            }
         }
 
     }
