@@ -32,12 +32,10 @@ public class IntervalsController {
     public ResponseEntity<Void> send(@RequestParam String kind, @RequestBody Object intervals){
         switch (kind){
             case "digits" -> {
-                this.numberService.createInterval(Mappings.ArraytoNumberDto((ArrayList<ArrayList<Integer>>) intervals));
-                this.numberService.mergeIntervals();
+                this.numberService.createIntervalAndMerge(Mappings.ArraytoNumberDto((ArrayList<ArrayList<Integer>>) intervals));
             }
             case "letters"->{
-                this.letterService.createInterval(Mappings.ArraytoLetterDto((ArrayList<ArrayList<String>>) intervals));
-                this.letterService.mergeIntervals();
+                this.letterService.createIntervalAndMerge(Mappings.ArraytoLetterDto((ArrayList<ArrayList<String>>) intervals));
             }
         }
         return ResponseEntity.status(HttpStatus.OK).build();
@@ -47,10 +45,12 @@ public class IntervalsController {
     public ResponseEntity<List> min(@RequestParam String kind) {
         switch (kind){
             case "digits" -> {
+                this.numberService.mergeIntervals();
                 NumbersDto min  = this.numberService.min();
                 return ResponseEntity.ok(min.getInterval());
             }
             case "letters"->{
+                this.letterService.mergeIntervals();
                 LettersDto min = this.letterService.min();
                 return ResponseEntity.ok(min.getInterval());
             }
